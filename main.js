@@ -1,8 +1,8 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
 const path = require("path");
 
-let mainWindow;
+let mainWindow, newWindow;
 
 function createWindow() {
   // Create the browser window.
@@ -10,16 +10,17 @@ function createWindow() {
     width: 335,
     minWidth: 320,
     height: 840,
+    icon: __dirname + "./assets/images/note.png",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false, // is default value after Electron v5
       contextIsolation: true, // protect against prototype pollution
-      enableRemoteModule: false, // turn off remote
+      enableRemoteModule: true, // turn off remote
     },
   });
 
   // and load the index.html of the app.
-  mainWindow.loadFile("index.html");
+  mainWindow.loadFile("./src/index.html");
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -50,4 +51,32 @@ app.on("window-all-closed", function () {
 
 ipcMain.on("note-list", (event, arg) => {
   mainWindow.webContents.send("note-val", arg);
+});
+
+let noteEleId 
+
+ipcMain.on("newWindow", (event, arg) => {
+  noteEleId = arg.id
+  newWindow = new BrowserWindow({
+    width: 305,
+    height: 315,
+    icon: __dirname + "./assets/images/note.png",
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: false, // is default value after Electron v5
+      contextIsolation: true, // protect against prototype pollution
+      enableRemoteModule: true, // turn off remote
+    },
+  });
+  // newWindow.removeMenu();
+  newWindow.loadURL(arg.file);
+
+  newWindow.on("close", (e) => {
+    
+  });
+});
+
+
+ipcMain.on("update-specific-note", (event, arg) => {
+  mainWindow.webContents.send("specific-note-val", {id: noteEleId, value: arg}); // arg has object id for targeting element
 });

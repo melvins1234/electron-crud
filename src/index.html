@@ -4,12 +4,9 @@
     <meta charset="UTF-8" />
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
 
-    <link rel="stylesheet" href="./assets/css/preset.css" />
-    <link rel="stylesheet" href="assets/css/style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    />
+    <link rel="stylesheet" href="../assets/css/preset.css" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <title>Sticky Note</title>
   </head>
   <body>
@@ -24,13 +21,16 @@
 
       <!-- Body -->
       <main class="body">
-            <img class="body__image" src="assets/images/note.svg" alt=""></img>
-            <p>Tap the new note button above to create a note.</p>
+        <div class="body__blank">
+          <img class="body__image" src="../assets/images/note.svg" alt=""></img>
+        <p>Tap the new note button above to create a note.</p>
+      </div>
+      <div class="body__notes-list"></div>
       </main>
 
     </div>
 
     <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
+    <script src="../renderer.js"></script>
   </body>
 </html>
