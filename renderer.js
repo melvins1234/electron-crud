@@ -4,3 +4,9 @@
 // `nodeIntegration` is turned off. Use `preload.js` to
 // selectively enable features needed in the rendering
 // process.
+window.notes.sendNotesList()
+window.notes.receiveNoteList((data)=> {
+    console.log(data);
+})
+
+

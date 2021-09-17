@@ -1,0 +1,82 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap");
+
+html,
+body {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  height: 100%;
+}
+
+#root {
+  padding: 10px;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  &__title {
+    font-weight: bold;
+    font-size: 24px;
+  }
+  &__icon {
+    cursor: pointer;
+  }
+}
+.body {
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+  align-items: center;
+  position: relative;
+  text-align: center;
+  word-wrap: break-word;
+  &__image {
+    width: 100px;
+    margin: 50px;
+    max-width: 100%;
+  }
+
+  &__sticky-note {
+    background-color: #fff7d1;
+    width: 100%;
+    padding: 20px 10px;
+    margin: 5px 0;
+    text-align: left;
+    user-select: none;
+
+    p {
+      pointer-events: none;
+    }
+
+    position: relative;
+    &:hover {
+      background-color: #dfd8b9;
+      .body__delete {
+        opacity: 1;
+      }
+      .body__timeStamp {
+        opacity: 0;
+      }
+    }
+  }
+
+  // &__reverse {
+  //   flex-flow: column-reverse;
+  // }
+
+  &__delete,
+  &__timeStamp {
+    position: absolute;
+    opacity: 0;
+    z-index: 1;
+    top: 20px;
+    right: 20px;
+    transition: opacity 0.5s;
+  }
+  &__timeStamp {
+    opacity: 1;
+  }
+}
