@@ -2,6 +2,7 @@
 // It has the same sandbox as a Chrome extension.
 const mysql = require("mysql");
 const { contextBridge, ipcRenderer } = require("electron");
+const moment = require("moment");
 
 window.addEventListener("DOMContentLoaded", () => {
   const replaceText = (selector, text) => {
@@ -51,12 +52,26 @@ contextBridge.exposeInMainWorld("notes", {
   },
   receiveNoteList: (func) => {
     ipcRenderer.on("note-val", (event, arg) => func(arg));
+
+    // ipcRenderer.on("note-val", (event, arg) => {
+    //   arg.sort((a, b) => {
+    //     return new Date(b.date) - new Date(a.date);
+    //   });
+    //   arg.map(e => {
+    //     console.log(new Date(e.date) >= new Date());
+    //     new Date(e.date).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0) ?
+    //       e.date = moment(e.date).format("h:mm A") : e.date = moment(e.date).format("MMM D, YYYY")
+    //   })
+    //   func(arg)
+    // });
+
+
   },
   openNewWindow: (id) => {
 
     ipcRenderer.send(
       "newWindow",
-      {file: "file://" + __dirname + "/src/noteWindow.html", id: id}
+      { file: "file://" + __dirname + "/src/noteWindow.html", id: id }
     );
   },
   sendUpdateSpecificNote: (data) => {
@@ -64,8 +79,10 @@ contextBridge.exposeInMainWorld("notes", {
   },
   updateSpecifiNote: (func) => {
     ipcRenderer.on("specific-note-val", (event, arg) => func(arg))
-  }, 
+    ipcRenderer.on("id-val", (event, arg) => func(arg))
+  },
   insertNoteToDB: (data) => {
+    console.log(data);
     $query = `INSERT INTO note VALUES(${data.id}, '${data.date}', '${data.value}')`;
     connection.query($query, (err, rows, fields) => {
       if (err) {

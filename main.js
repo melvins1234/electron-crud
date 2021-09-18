@@ -70,13 +70,10 @@ ipcMain.on("newWindow", (event, arg) => {
   });
   // newWindow.removeMenu();
   newWindow.loadURL(arg.file);
-
-  newWindow.on("close", (e) => {
-    
-  });
 });
 
 
 ipcMain.on("update-specific-note", (event, arg) => {
   mainWindow.webContents.send("specific-note-val", {id: noteEleId, value: arg}); // arg has object id for targeting element
+  newWindow.webContents.send("id-val", {id: noteEleId, value: arg});
 });

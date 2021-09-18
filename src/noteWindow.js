@@ -7,11 +7,13 @@ textarea.addEventListener("input", (event) => {
 });
 
 window.notes.updateSpecifiNote((data) => {
+  console.log(data);
   id = data.id;
   value = data.value;
 });
 
-window.addEventListener("beforeunload", (e) => {
-    e.preventDefault();
-    window.notes.insertNoteToDB({id: id, date: new Date(), value: value})
-});
+window.onbeforeunload = function(e) {
+  window.notes.insertNoteToDB({id: id, date: new Date(), value: textarea.value})
+  // return 'Please press the Logout button to logout.';
+};
+
