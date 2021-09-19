@@ -67,12 +67,14 @@ contextBridge.exposeInMainWorld("notes", {
 
 
   },
-  openNewWindow: (id) => {
-
+  openNewWindow: (data) => {
     ipcRenderer.send(
       "newWindow",
-      { file: "file://" + __dirname + "/src/noteWindow.html", id: id }
+      { file: "file://" + __dirname + "/src/noteWindow.html", data }
     );
+    // if(data.action === 'update')
+    //   localStorage.setItem('note', JSON.stringify(data))
+    // https://stackoverflow.com/questions/45148110/how-to-add-a-callback-to-ipc-renderer-send
   },
   sendUpdateSpecificNote: (data) => {
     ipcRenderer.send("update-specific-note", data)
@@ -91,5 +93,8 @@ contextBridge.exposeInMainWorld("notes", {
         return;
       }
     });
+  },
+  updateExistingNote: (func) => {
+    ipcRenderer.on("edit-id-val", (event, arg) => func(arg))
   }
 });

@@ -53,10 +53,10 @@ ipcMain.on("note-list", (event, arg) => {
   mainWindow.webContents.send("note-val", arg);
 });
 
-let noteEleId 
+let noteEleId
 
 ipcMain.on("newWindow", (event, arg) => {
-  noteEleId = arg.id
+  noteEleId = arg.data.id
   newWindow = new BrowserWindow({
     width: 305,
     height: 315,

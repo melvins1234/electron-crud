@@ -31,7 +31,7 @@ window.notes.receiveNoteList((data) => {
     const div = document.createElement("div");
     div.classList.add(`body__sticky-note`);
     div.addEventListener('dblclick', () => {
-      window.notes.openNewWindow(collec.id);
+      window.notes.openNewWindow({id: collec.id, action: 'update', value: collec.value});
     })
     div.id = `${collec.id}`
     div.innerHTML = `
@@ -54,7 +54,7 @@ addNote.addEventListener("click", () => {
         <p>Take a note... </p>
         <i class="body__delete fas fa-trash-alt"></i>`;
   noteList.insertBefore(div, noteList.firstChild);
-  window.notes.openNewWindow(id);
+  window.notes.openNewWindow({id: id, action: 'add'});
 });
 
 
