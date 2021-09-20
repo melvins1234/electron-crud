@@ -15,11 +15,11 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-const connection = mysql.createConnection({
+let connection = mysql.createConnection({
   // AWS RDS MYSQL Connection
-  host: "onestoptech.cai20tt60bsf.ap-southeast-1.rds.amazonaws.com",
-  user: "onestoptech",
-  password: "password",
+  host: "localhost",
+  user: "root",
+  password: "Password@123",
   database: "sticky_note",
 });
 
@@ -30,25 +30,30 @@ connection.connect((err) => {
   }
 });
 
+
+
 // Refresh List
 
-let notes = () => {
-  // Perform a query
-  $query = `SELECT * FROM note`;
-
-  connection.query($query, (err, rows, fields) => {
-    if (err) {
-      console.log("An error ocurred performing the query.");
-      console.log(err);
-      return;
-    }
-    ipcRenderer.send("note-list", rows);
-  });
-};
 
 contextBridge.exposeInMainWorld("notes", {
   sendNotesList: () => {
-    notes();
+    // createConnection(); // Start Connection
+    // Perform a query
+    $query = `SELECT * FROM note`;
+
+    connection.query($query, (err, rows, fields) => {
+      if (err) {
+        console.log("An error ocurred performing the query.");
+        console.log(err);
+        return;
+      }
+      ipcRenderer.send("note-list", rows);
+    });
+
+    // Close the connection
+    // connection.end(function () {
+    //   // The connection has been closed
+    // });
   },
   receiveNoteList: (func) => {
     ipcRenderer.on("note-val", (event, arg) => func(arg));
@@ -68,12 +73,16 @@ contextBridge.exposeInMainWorld("notes", {
     ipcRenderer.on("id-val", (event, arg) => func(arg));
   },
   noteInsertOrUpdateToDB: (data) => {
-    if (data.action === "add") {
-      $query = `INSERT INTO note VALUES(${data.id}, '${data.date}', '${data.value}')`;
+    if (!data.isEmpty) {
+      if (data.action === "add") {
+        $query = `INSERT INTO note VALUES(${data.id}, '${data.date}', '${data.value}')`;
+      } else {
+        $query = `UPDATE note
+        SET date = '${data.date}', value= '${data.value}'
+        WHERE id = ${data.id};`;
+      }
     } else {
-      $query = `UPDATE note
-      SET date = '${data.date}', value= '${data.value}'
-      WHERE id = ${data.id};`;
+      $query = `DELETE FROM note WHERE id=${data.id}`;
     }
 
     connection.query($query, (err, rows, fields) => {
@@ -102,5 +111,11 @@ contextBridge.exposeInMainWorld("notes", {
   },
   sampleActions: (func) => {
     ipcRenderer.on("test-val", (event, arg) => func(arg));
+  },
+  removeDivIfNoteIsBlank: (isEmpty) => {
+    ipcRenderer.send("remove-div-action", isEmpty);
+  },
+  removeDiv: (isEmpty) => {
+    ipcRenderer.on("textarea-val", (event, arg) => isEmpty(arg));
   },
 });

@@ -20,6 +20,7 @@ function createWindow() {
   });
 
   // and load the index.html of the app.
+  // mainWindow.removeMenu();
   mainWindow.loadFile("./src/index.html");
 
   // Open the DevTools.
@@ -70,7 +71,7 @@ ipcMain.handle("newWindow", async (event, arg) => {
         enableRemoteModule: true, // turn off remote
       },
     });
-    // newWindow.removeMenu();
+    newWindow.removeMenu();
     newWindow.loadURL(arg.file);
     windowId = newWindow.id;
   }
@@ -89,3 +90,7 @@ ipcMain.on("update-specific-note", (event, arg) => {
 ipcMain.on("an-action", (event, arg) => {
   newWindow.webContents.send("test-val", arg);
 });
+
+ipcMain.on("remove-div-action", (event, arg) => {
+  mainWindow.webContents.send("textarea-val", arg);
+})

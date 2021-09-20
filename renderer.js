@@ -56,6 +56,8 @@ window.notes.receiveNoteList((data) => {
     });
     i.addEventListener("click", () => {
       window.notes.deleteNoteToDB(collec.id);
+      const noteDiv = document.getElementById(`${collec.id}`);
+      noteDiv.remove();
     });
     div.id = `${collec.id}`;
     div.innerHTML = `
@@ -67,16 +69,26 @@ window.notes.receiveNoteList((data) => {
 });
 addNote.addEventListener("click", () => {
   let id = generateId();
-
+  if (document.querySelector(".body__blank")) {
+    document.querySelector(".body__blank").remove();
+  }
   let openNewWindow = async () => {
     let response = await window.notes.openNewWindow({ id: id, action: "add" });
     const div = document.createElement("div");
+    const i = document.createElement("i");
+    i.className = "body__delete fas fa-trash-alt";
+
     div.classList.add(`body__sticky-note`);
     div.setAttribute(`id`, id);
     div.setAttribute("aria-label", response);
     div.innerHTML = `
-        <p>Take a note... </p>
-        <i class="body__delete fas fa-trash-alt"></i>`;
+        <p>Take a note... </p>`;
+    i.addEventListener("click", () => {
+      window.notes.deleteNoteToDB(id);
+      const noteDiv = document.getElementById(`${id}`);
+      noteDiv.remove();
+    });
+    div.appendChild(i);
     noteList.insertBefore(div, noteList.firstChild);
   };
   openNewWindow().then(() => {
@@ -90,10 +102,43 @@ addNote.addEventListener("click", () => {
 });
 
 window.notes.updateSpecifiNote((data) => {
-  if (data.value !== null) {
-    const noteDiv = document.getElementById(`${data.id}`).querySelector("p");
-    noteDiv.textContent = data.value;
+  if (data.value !== "") {
+    if (document.getElementById(`${data.id}`)) {
+      const noteDiv = document.getElementById(`${data.id}`).querySelector("p");
+      noteDiv.textContent = data.value;
+    } else {
+      const div = document.createElement("div");
+      div.classList.add(`body__sticky-note`);
+      div.setAttribute(`id`, id);
+      // div.setAttribute("aria-label", response);
+      div.innerHTML = `
+          <p>Take a note... </p>
+          <i class="body__delete fas fa-trash-alt"></i>`;
+      noteList.insertBefore(div, noteList.firstChild);
+    }
   } else {
-    document.getElementById(`${data.id}`).remove();
+    console.log(data);
+    document.getElementById(`${data.id}`).querySelector("p").textContent =
+      "Take a note... ";
   }
 });
+
+window.notes.removeDiv((data) => {
+  const noteDiv = document.getElementById(`${data.id}`);
+  noteDiv.remove();
+
+  let div = document.createElement("div");
+  div.classList.add("body__blank");
+
+  div.innerHTML = `<img class="body__image" src="../assets/images/note.svg" alt=""></img>
+  <p>Tap the new note button above to create a note.</p>`;
+
+  if (document.querySelector(".body__notes-list").childElementCount <= 0) {
+    document.querySelector('.body').insertBefore(div, document.querySelector('.body').firstChild);
+  }
+});
+
+
+document.addEventListener('click', function (e) {
+
+})
