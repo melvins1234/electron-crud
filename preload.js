@@ -52,40 +52,30 @@ contextBridge.exposeInMainWorld("notes", {
   },
   receiveNoteList: (func) => {
     ipcRenderer.on("note-val", (event, arg) => func(arg));
-
-    // ipcRenderer.on("note-val", (event, arg) => {
-    //   arg.sort((a, b) => {
-    //     return new Date(b.date) - new Date(a.date);
-    //   });
-    //   arg.map(e => {
-    //     console.log(new Date(e.date) >= new Date());
-    //     new Date(e.date).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0) ?
-    //       e.date = moment(e.date).format("h:mm A") : e.date = moment(e.date).format("MMM D, YYYY")
-    //   })
-    //   func(arg)
-    // });
-
-
   },
-  openNewWindow: (data) => {
-    ipcRenderer.send(
-      "newWindow",
-      { file: "file://" + __dirname + "/src/noteWindow.html", data }
-    );
-    // if(data.action === 'update')
-    //   localStorage.setItem('note', JSON.stringify(data))
-    // https://stackoverflow.com/questions/45148110/how-to-add-a-callback-to-ipc-renderer-send
+  openNewWindow: async (data) => {
+    let id = await ipcRenderer.invoke("newWindow", {
+      file: "file://" + __dirname + "/src/noteWindow.html",
+      data,
+    });
+    return id;
   },
   sendUpdateSpecificNote: (data) => {
-    ipcRenderer.send("update-specific-note", data)
+    ipcRenderer.send("update-specific-note", data);
   },
   updateSpecifiNote: (func) => {
-    ipcRenderer.on("specific-note-val", (event, arg) => func(arg))
-    ipcRenderer.on("id-val", (event, arg) => func(arg))
+    ipcRenderer.on("specific-note-val", (event, arg) => func(arg));
+    ipcRenderer.on("id-val", (event, arg) => func(arg));
   },
-  insertNoteToDB: (data) => {
-    console.log(data);
-    $query = `INSERT INTO note VALUES(${data.id}, '${data.date}', '${data.value}')`;
+  noteInsertOrUpdateToDB: (data) => {
+    if (data.action === "add") {
+      $query = `INSERT INTO note VALUES(${data.id}, '${data.date}', '${data.value}')`;
+    } else {
+      $query = `UPDATE note
+      SET date = '${data.date}', value= '${data.value}'
+      WHERE id = ${data.id};`;
+    }
+
     connection.query($query, (err, rows, fields) => {
       if (err) {
         console.log("An error ocurred performing the query.");
@@ -95,6 +85,22 @@ contextBridge.exposeInMainWorld("notes", {
     });
   },
   updateExistingNote: (func) => {
-    ipcRenderer.on("edit-id-val", (event, arg) => func(arg))
-  }
+    ipcRenderer.on("edit-id-val", (event, arg) => func(arg));
+  },
+  deleteNoteToDB: (data) => {
+    $query = `DELETE FROM note WHERE id=${data}`;
+    connection.query($query, (err, rows, fields) => {
+      if (err) {
+        console.log("An error ocurred performing the query.");
+        console.log(err);
+        return;
+      }
+    });
+  },
+  sampleAction: (data) => {
+    ipcRenderer.send("an-action", data);
+  },
+  sampleActions: (func) => {
+    ipcRenderer.on("test-val", (event, arg) => func(arg));
+  },
 });

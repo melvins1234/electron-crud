@@ -53,27 +53,39 @@ ipcMain.on("note-list", (event, arg) => {
   mainWindow.webContents.send("note-val", arg);
 });
 
-let noteEleId
+let noteEleId;
 
-ipcMain.on("newWindow", (event, arg) => {
-  noteEleId = arg.data.id
-  newWindow = new BrowserWindow({
-    width: 305,
-    height: 315,
-    icon: __dirname + "./assets/images/note.png",
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: false, // is default value after Electron v5
-      contextIsolation: true, // protect against prototype pollution
-      enableRemoteModule: true, // turn off remote
-    },
-  });
-  // newWindow.removeMenu();
-  newWindow.loadURL(arg.file);
+ipcMain.handle("newWindow", async (event, arg) => {
+  noteEleId = arg.data.id;
+  let windowId;
+  function windowsBrowser() {
+    newWindow = new BrowserWindow({
+      width: 305,
+      height: 315,
+      icon: __dirname + "./assets/images/note.png",
+      webPreferences: {
+        preload: path.join(__dirname, "preload.js"),
+        nodeIntegration: false, // is default value after Electron v5
+        contextIsolation: true, // protect against prototype pollution
+        enableRemoteModule: true, // turn off remote
+      },
+    });
+    // newWindow.removeMenu();
+    newWindow.loadURL(arg.file);
+    windowId = newWindow.id;
+  }
+  await windowsBrowser();
+  return windowId;
 });
 
-
 ipcMain.on("update-specific-note", (event, arg) => {
-  mainWindow.webContents.send("specific-note-val", {id: noteEleId, value: arg}); // arg has object id for targeting element
-  newWindow.webContents.send("id-val", {id: noteEleId, value: arg});
+  mainWindow.webContents.send("specific-note-val", {
+    id: noteEleId,
+    value: arg,
+  }); // arg has object id for targeting element
+  newWindow.webContents.send("id-val", { id: noteEleId, value: arg });
+});
+
+ipcMain.on("an-action", (event, arg) => {
+  newWindow.webContents.send("test-val", arg);
 });
