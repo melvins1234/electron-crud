@@ -71,7 +71,7 @@ ipcMain.handle("newWindow", async (event, arg) => {
         enableRemoteModule: true, // turn off remote
       },
     });
-    newWindow.removeMenu();
+    // newWindow.removeMenu();
     newWindow.loadURL(arg.file);
     windowId = newWindow.id;
   }
@@ -93,4 +93,9 @@ ipcMain.on("an-action", (event, arg) => {
 
 ipcMain.on("remove-div-action", (event, arg) => {
   mainWindow.webContents.send("textarea-val", arg);
+})
+
+ipcMain.on("close-window-action", (event, arg) => {
+  let windowClose = BrowserWindow.fromId(arg)
+  windowClose.close();
 })

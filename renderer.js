@@ -28,7 +28,6 @@ const generateId = () => {
 
 window.notes.receiveNoteList((data) => {
   if (data.length !== 0) noteBlank.remove();
-
   data.map((collec) => {
     const div = document.createElement("div");
     const i = document.createElement("i");
@@ -36,15 +35,18 @@ window.notes.receiveNoteList((data) => {
 
     div.classList.add(`body__sticky-note`);
     div.addEventListener("dblclick", () => {
+      let response = 0;
       let noteContent = async () => {
-        await window.notes.openNewWindow({
+        response = await window.notes.openNewWindow({
           id: collec.id,
           action: "update",
           value: collec.value,
         });
       };
 
+
       noteContent().then(() => {
+        div.setAttribute("aria-label", response);
         setTimeout(() => {
           window.notes.sampleAction({
             id: collec.id,
@@ -58,6 +60,10 @@ window.notes.receiveNoteList((data) => {
       window.notes.deleteNoteToDB(collec.id);
       const noteDiv = document.getElementById(`${collec.id}`);
       noteDiv.remove();
+      console.log(div.getAttribute('aria-label'));
+      if (div.getAttribute('aria-label') !== 0 && div.getAttribute('aria-label') !== null) {
+        window.notes.closeOpenedWindow(parseInt(div.getAttribute('aria-label')))
+      }
     });
     div.id = `${collec.id}`;
     div.innerHTML = `
@@ -87,6 +93,7 @@ addNote.addEventListener("click", () => {
       window.notes.deleteNoteToDB(id);
       const noteDiv = document.getElementById(`${id}`);
       noteDiv.remove();
+      window.notes.closeOpenedWindow(response)
     });
     div.appendChild(i);
     noteList.insertBefore(div, noteList.firstChild);
@@ -140,5 +147,7 @@ window.notes.removeDiv((data) => {
 
 
 document.addEventListener('click', function (e) {
-
+  if(e.target.className.split(' ').indexOf('body__sticky-note') > -1){
+    console.log(e.target);
+  }
 })

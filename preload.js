@@ -118,4 +118,7 @@ contextBridge.exposeInMainWorld("notes", {
   removeDiv: (isEmpty) => {
     ipcRenderer.on("textarea-val", (event, arg) => isEmpty(arg));
   },
+  closeOpenedWindow: (browserWindowId) => {
+    ipcRenderer.send("close-window-action", browserWindowId)
+  }
 });
