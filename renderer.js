@@ -60,7 +60,6 @@ window.notes.receiveNoteList((data) => {
       window.notes.deleteNoteToDB(collec.id);
       const noteDiv = document.getElementById(`${collec.id}`);
       noteDiv.remove();
-      console.log(div.getAttribute('aria-label'));
       if (div.getAttribute('aria-label') !== 0 && div.getAttribute('aria-label') !== null) {
         window.notes.closeOpenedWindow(parseInt(div.getAttribute('aria-label')))
       }
@@ -93,7 +92,7 @@ addNote.addEventListener("click", () => {
       window.notes.deleteNoteToDB(id);
       const noteDiv = document.getElementById(`${id}`);
       noteDiv.remove();
-      window.notes.closeOpenedWindow(response)
+      // window.notes.closeOpenedWindow(response)
     });
     div.appendChild(i);
     noteList.insertBefore(div, noteList.firstChild);
