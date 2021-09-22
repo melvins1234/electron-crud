@@ -34,28 +34,6 @@ window.notes.receiveNoteList((data) => {
     i.className = "body__delete fas fa-trash-alt";
 
     div.classList.add(`body__sticky-note`);
-    div.addEventListener("dblclick", () => {
-      let response = 0;
-      let noteContent = async () => {
-        response = await window.notes.openNewWindow({
-          id: collec.id,
-          action: "update",
-          value: collec.value,
-        });
-      };
-
-
-      noteContent().then(() => {
-        div.setAttribute("aria-label", response);
-        setTimeout(() => {
-          window.notes.sampleAction({
-            id: collec.id,
-            action: "update",
-            value: collec.value,
-          });
-        }, 500);
-      });
-    });
     i.addEventListener("click", () => {
       window.notes.deleteNoteToDB(collec.id);
       const noteDiv = document.getElementById(`${collec.id}`);
@@ -92,7 +70,7 @@ addNote.addEventListener("click", () => {
       window.notes.deleteNoteToDB(id);
       const noteDiv = document.getElementById(`${id}`);
       noteDiv.remove();
-      // window.notes.closeOpenedWindow(response)
+      window.notes.closeOpenedWindow(response)
     });
     div.appendChild(i);
     noteList.insertBefore(div, noteList.firstChild);
@@ -145,8 +123,28 @@ window.notes.removeDiv((data) => {
 });
 
 
-document.addEventListener('click', function (e) {
-  if(e.target.className.split(' ').indexOf('body__sticky-note') > -1){
-    console.log(e.target);
+document.addEventListener('dblclick', function (e) {
+  if (e.target.className.split(' ').indexOf('body__sticky-note') > -1) {
+    let id = e.target.getAttribute('id');
+    let value = e.target.querySelector('p').textContent
+    let response = 0;
+    let noteContent = async () => {
+      response = await window.notes.openNewWindow({
+        id,
+        action: "update",
+        value,
+      });
+    };
+
+    noteContent().then(() => {
+      e.target.setAttribute("aria-label", response);
+      setTimeout(() => {
+        window.notes.sampleAction({
+          id,
+          action: "update",
+          value,
+        });
+      }, 500);
+    });
   }
 })

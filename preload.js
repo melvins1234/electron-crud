@@ -31,10 +31,7 @@ connection.connect((err) => {
 });
 
 
-
 // Refresh List
-
-
 contextBridge.exposeInMainWorld("notes", {
   sendNotesList: () => {
     // createConnection(); // Start Connection
