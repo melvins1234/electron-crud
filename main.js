@@ -97,5 +97,8 @@ ipcMain.on("remove-div-action", (event, arg) => {
 
 ipcMain.on("close-window-action", (event, arg) => {
   let windowClose = BrowserWindow.fromId(arg)
-  windowClose.close();
+  console.log(windowClose);
+  if (windowClose !== null) {
+    windowClose.close();
+  }
 })
