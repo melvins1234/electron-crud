@@ -17,7 +17,7 @@
   "author": "Melvin",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^14.0.1"
+    "electron": "^17.1.0"
   },
   "dependencies": {
     "moment": "^2.29.1",
