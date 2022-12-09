@@ -22,7 +22,7 @@
   "dependencies": {
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
-    "sass": "^1.42.0",
+    "sass": "^1.56.2",
     "sass-loader": "^12.1.0"
   }
 }
